@@ -1,0 +1,131 @@
+/*
+ * Licensed Materials - Property of IBM
+ * 5737-I23 5900-AUD
+ * Copyright IBM Corp. 2018 - 2026. All Rights Reserved.
+ * U.S. Government Users Restricted Rights:
+ * Use, duplication or disclosure restricted by GSA ADP Schedule
+ * Contract with IBM Corp.
+ */
+
+package com.ibm.di.samples;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.logging.Logger;
+
+import javax.net.ssl.*;
+
+public class RestJavaClient {
+    private Logger logger;
+    final private String SPACE_ID = "development";
+
+    public RestJavaClient()  {
+        logger = Logger.getAnonymousLogger();
+    }
+
+    public  DIResponse executeDecision(String host, String decisionServiceId, String operationName, String apikey, String requestBody) throws Exception {
+        // method to be used to send request : POST
+        // possible return codes are :
+        //  200 OK
+        //  404 decisionId or decision operation invalid (not found)
+        //  500 error during the execution
+        // response content is a JSON payload (if status is ok)
+        //
+        //Server response
+        //Code	Details
+        DIResponse result = new DIResponse();
+
+        String stringUrl = null;
+        try {
+            stringUrl = String.format("https://%s/ads/runtime/api/v1/deploymentSpaces/%s/decisions/%s/operations/%s/extendedExecute",
+                    host, URLEncoder.encode(SPACE_ID,"UTF-8"),
+                    URLEncoder.encode(decisionServiceId,"UTF-8"), URLEncoder.encode(operationName,"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            System.out.println("Exception " + e);
+            logger.throwing(this.getClass().getName(),"executeProject",e);
+        }
+        System.out.println("URL: " + stringUrl);
+        logger.info("URL: " + stringUrl);
+
+        URL url = new URI(stringUrl).toURL();
+
+        // Configure the SSLContext with a TrustManager to avoid certificate issues in this sample and force TLS 1.2
+        // ** This is done to facilitate the use of the sample and focus on the DI Runtime execution **
+        // ** For a real application, the user has to load and use his certificate **
+        SSLContext context = SSLContext.getInstance("TLSv1.2");
+        context.init(
+                null,
+                new TrustManager[] {
+                        new X509TrustManager() {
+                            @Override
+                            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { }
+
+                            @Override
+                            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException { }
+
+                            @Override
+                            public X509Certificate[] getAcceptedIssuers() {
+                                return new X509Certificate[0];
+                            }
+                        }
+                },
+                new SecureRandom()
+        );
+        HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
+
+        // Creating the Request
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+
+ 
+        connection.setRequestProperty("Content-Type", "application/json");
+        // Authentication with api key
+        String bearer = /*  "Bearer " + */  apikey;
+        connection.setRequestProperty  ("apikey", bearer);  
+        connection.setHostnameVerifier(new HostnameVerifier() {
+            @Override
+            public boolean verify(String arg0, SSLSession arg1) {
+                return true;
+            }
+        });
+
+        // Sending the payload
+        OutputStream outputStream = connection.getOutputStream();
+        outputStream.write(requestBody.getBytes("UTF-8"));
+        logger.info("INPUT: " + outputStream.toString());
+        System.out.println("INPUT: " + outputStream.toString());
+        outputStream.close();
+
+        // Get response code
+        result.status = connection.getResponseCode();
+
+        // Get response content
+        BufferedReader input = new BufferedReader(
+                new InputStreamReader(connection.getInputStream()));
+
+        String inputLine;
+        StringBuffer content = new StringBuffer();
+        while ((inputLine = input.readLine()) != null) {
+            content.append(inputLine);
+        }
+        result.payload = content.toString();
+        logger.info("OUTPUT: " + result);
+        System.out.println("OUTPUT: " + result);
+
+        input.close();
+        connection.disconnect();
+
+        return result;
+
+    }
+
+}
