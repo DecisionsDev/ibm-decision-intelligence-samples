@@ -9,6 +9,7 @@ which calls a decision service archive to process loan requests using the decisi
 - Configure a web application to call a decision service using the decision runtime REST API.
 - Run the web application with representative data.
 - Explore the execution trace.
+- Monitor the execution in a Decision Insights dashboard.
 
 ## Audience
 
@@ -23,7 +24,7 @@ This sample is for anyone who wants to call a decision service deployed to the d
 - Decision Intelligence: You should have access to Decision Intelligence. Decision Intelligence includes Decision Designer, a comprehensive authoring environment where you can develop, test, and deploy decision services.
 - API key: To call the decision services you deployed from Decision Intelligence, you must use an API key.
 For more information about API keys, see [Creating API keys](https://www.ibm.com/docs/en/saas-console?topic=usca-granting-access-through-service-ids-api-keys-from-saas-console#creating_APIkeys)
-- Websphere Application Server Liberty: A Java application server that you can download from [Download WAS Liberty](https://developer.ibm.com/wasdev/downloads/). This sample was tested with **WebSphere Liberty Web Profile 8 26.0.0.1**.
+- Websphere Application Server Liberty: A Java application server that you can download from [Download WAS Liberty](https://www.ibm.com/support/pages/websphere-liberty-developers). This sample was tested with **WebSphere Liberty Web Profile 8 26.0.0.6**.
 - Apache Maven: A software project management tool that you can download from [Welcome to Apache Maven](https://maven.apache.org).
 
 It is recommended that you go through the tutorial [Creating and deploying a decision service](https://www.ibm.com/docs/en/decision-intelligence?topic=tutorials-creating-deploying-decision-service) before using this sample.
@@ -45,7 +46,37 @@ Open the `Loan Approval` decision service.
     - Go to the `Run` tab  to run the predefined test data sets.
 6. When you are finished exploring the decision service, click the `Share changes` icon in the top toolbar. Keep only `Loan approval` selected and click on `Share`. 
 7. Go to the `Deploy`tab. Create a new version `1.0.0`and deploy it.
-8. When the deployment has completed, copy the decision ID. You will need this parameter in the next step.
+8. When the deployment has completed, click on `Manage deployment` to open the `Decision deployments`view.
+9. Open the `Metadata`tab and copy the decision ID. You will need this parameter in the next step.
+10. Open the `Overview` tab and set `Business monitoring is active`to be able to monitor the executions in Decision Insights.
+
+You execute the decision service to get a first execution.
+
+1. Click on the `Swagger UI` to open the Swagger UI dedicated to the Loan Approval decision service.
+2. Expand the `POST approval/execute` command.
+3. Click on `Try it out`, keep the proposed Input data.
+4. Click `Execute`. The loan is rejected because the borrower's ZIP code is incorrectly formatted.
+
+## Monitoring executions with Decision Insights
+
+You use Decision Insights to monitor executions of the decision service through a dashboard.
+
+You create a monitoring source:
+1. Open the side navigation menu and click `Dashboards`.
+2. Open the `Monitoring Sources` tab and click the `Create +`button.
+3. Enter `Sample loan approval`as the name.
+4. Select the decision service that you just deployed as the `Scope`. Its name ends with `Loan Approval (User Id)`.
+5. Keep `Private`selected, then click `Add`.
+
+You import a predefined dashboard and associate it with your monitoring source:
+1. Open the `Dashboards` tab and click `Import`.
+2. Browse to `samples/LoanApplicationSample/dashboard/LoanApproval.json`, then click `Open` and `Import` to load the predefined dashboard.
+3. Click on the `Edit details` icon.
+4. In `Monitoring sources used in charts`, click `Bulk edit`.
+5. Select the monitoring source that you just created, then click `Done` twice.
+6. Click on the `Save` icon.
+
+Explore the dashboard: it currently shows only one execution. To generate more data, run additional executions using the `Sample details` section below. Keep the dashboard open in your browser to observe updates in real time.
 
 ## Building and deploying the client application
 In this section, you download the repository for the sample application, set properties to match your decision service deployment, and build the application WAR file.
@@ -70,6 +101,7 @@ You can use the application when you see the message ``` BUILD SUCCESS```.
 
 **Note:** If you want to modify and build the application again, follow the instructions in the section [Modifying this sample](./README.md#modifying-this-sample) at the end of this readme.
 
+
 # Sample details
 1. In a browser, open the URL ```http://localhost:9080/loanApplicationSample-1.0-SNAPSHOT/```:
 
@@ -78,9 +110,16 @@ You can use the application when you see the message ``` BUILD SUCCESS```.
 2. Switch to the `Execution Details` tab: the values for the server name (called host name in the application) and the decision service ID are the ones you entered in the `config.js` file.
 3. Click **Request loan**, and look at the results.
 
-![Image shows the loan application.](images/loanApplicationWithResponse.png)
-
 4. Select **Trace Enabled**, and click **Request loan** again to get more details on the execution trace. You can choose between viewing the formatted output or the complete JSON response. You can play with the input values to change the results. For example, in the `Application` tab, if you change the amount to 2000000, you get the message ``` The loan cannot exceed 1000000.```
+
+**Note**
+Each time, you run the application, the dashboard is updated with the new results. Change the execution count to 5 and get more data to monitor.
+
+![Image shows the loan application with five responses.](images/loanApplicationWithResponse.png)
+
+Here is the dashboard with some data.
+
+![Image shows the dashboard.](images/MonitoringDashboard.png)
 
 # Modifying this sample
 
@@ -96,11 +135,5 @@ When you modify the decision automation or stop using it, follow these instructi
     2. Make and test your changes.
     3. Share your changes, create and deploy a new version.
     4. Use the decision service id newly deployed in the `Loan application`.
-    
-- To delete the decision automation:
-    1. Open Decision Intelligence.
-    2. Open the decision automation created for this sample.
-    3. In the `Deploy` tab, undeploy all the versions you deploy to test.
-    2. Click on `Decision Automations` in the breadcrumbs.
-    3. Open the menu of the decision automation card you created for this sample, select `Delete`.
+ 
 

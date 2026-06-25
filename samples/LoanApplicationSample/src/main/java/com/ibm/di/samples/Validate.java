@@ -54,6 +54,8 @@ public class Validate extends HttpServlet {
 	private static final String latestBankruptcy ="latestBankruptcy";
 	private static final String inputDateFormatTemplate = "dd/MM/yyyy";
 	private static final String outputDateFormatTemplate = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+	private int countApproved;
+	private int countRejected;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -99,15 +101,33 @@ public class Validate extends HttpServlet {
 	public String validate(JsonObject jsonInput) {
 		DIResponse response = null;
 		boolean showTrace  = (boolean) jsonInput.getBoolean("showTrace");
+		JsonObject payload = null;
+						System.out.println("**Before try " );
+
 		try {
-			JsonObject payload = getJSONPayload(jsonInput, showTrace);
-			System.out.println("**Payload " + payload);
+			InputData data = new InputData(jsonInput);
+			int count = jsonInput.getInt("executionCount");
+			if (count < 1) count = 1;
+			if (count > 20) count = 20;
 			String apikey = jsonInput.getString("apikey");
+			String server = jsonInput.getString("server");
+			String decisionServiceId = jsonInput.getString("decisionServiceId");
+			String operation = jsonInput.getString("operation");
+
 			RestJavaClient restClient = new RestJavaClient();
-			response = restClient.executeDecision(jsonInput.getString("server"), jsonInput.getString("decisionServiceId"),
-					jsonInput.getString("operation"), apikey, payload.toString());
-			System.out.println("**Response status" + response.status + " payload " + response.payload);
-			return decodeResponse(response, showTrace, jsonInput);
+			String messagesToDisplay = "<ul>";
+			countApproved = 0;
+			countRejected = 0;
+			for (int i=0; i < count; i++) {
+				data.generateData(i, count);
+				payload = getJSONPayload(jsonInput, data, showTrace);
+				System.out.println("**Payload " + payload);
+				response = restClient.executeDecision(server, decisionServiceId, operation, apikey, payload.toString());
+				System.out.println("**Response status" + response.status + " payload " + response.payload);
+				messagesToDisplay = messagesToDisplay + "<li>" + getSummaryMessage(response, jsonInput, data) + "</li>";
+			}
+			// return the latest answer with all the messages
+			return decodeResponse(count, response, showTrace, payload, messagesToDisplay +"</ul>");
 		} catch (ParseException e) {
 			return parseErrorToJSON(e);
 		} catch (ClassCastException e) {
@@ -132,11 +152,12 @@ public class Validate extends HttpServlet {
 	/**
 	 * Build the request payload from the form input
 	 * @param jsonInput
+	 * @param data 
 	 * @param showTrace when the trace is enabled add the required parts to the payload
 	 * @return
 	 */
 	private JsonObject getJSONPayload(JsonObject jsonInput,
-									  boolean showTrace) throws Exception{
+									  InputData data, boolean showTrace) throws Exception{
 		SSN ssnObject = new SSN(jsonInput.getString("SSNCode"));
 		JsonObject jsonSSN = Json.createObjectBuilder()
 				.add(areaNumber, ssnObject.getAreaNumber())
@@ -154,32 +175,29 @@ public class Validate extends HttpServlet {
 					.add(lastName, jsonInput.getString("lastName"))
 					.add(birthDate, prepareDate(jsonInput.getString("birthDate")))
 					.add("SSN", jsonSSN)
-					.add(zipCode, jsonInput.getString("zipCode"))
+					.add(zipCode, data.getZipCode())
 					.add("spouse", JsonValue.NULL)
 					.add(latestBankruptcy, bankruptcy)
 					.add("SSN", jsonSSN)
-					.add(creditScore,
-							jsonInput.getInt("credit-score"))
-					.add(yearlyIncome,
-							jsonInput.getInt("yearly-income")).build();
+					.add(creditScore, data.getCreditScore())
+					.add(yearlyIncome, data.getYearlyIncome()).build();
 		} else {
 			jsonBorrower = Json.createObjectBuilder()
 					.add(firstName, jsonInput.getString("firstName"))
 					.add(lastName, jsonInput.getString("lastName"))
 					.add(birthDate, prepareDate(jsonInput.getString("birthDate")))
 					.add("SSN", jsonSSN)
-					.add(zipCode, jsonInput.getString("zipCode"))
+					.add(zipCode, data.getZipCode())
 					.add("spouse", JsonValue.NULL)
 					.add(latestBankruptcy, JsonValue.NULL)
 					.add("SSN", jsonSSN)
-					.add(creditScore,
-							jsonInput.getInt("credit-score"))
-					.add(yearlyIncome,
-							jsonInput.getInt("yearly-income")).build();
+					.add(creditScore, data.getCreditScore())
+					.add(yearlyIncome, data.getYearlyIncome()).build();
+
 		}
 		JsonObject loanObject = Json.createObjectBuilder()
-				.add(amount, jsonInput.getInt("amount"))
-				.add(duration, jsonInput.getInt("duration"))
+				.add(amount, data.getAmount())
+				.add(duration, data.getDuration())
 				.add(startDate,  prepareDate(jsonInput.getString("startDate")))
 				.add(loanToValue,
 						jsonInput.getJsonNumber("yearly-interest-rate").doubleValue() /100).build();
@@ -240,9 +258,9 @@ public class Validate extends HttpServlet {
 		return outputDateFormat.format(date);
 	}
 
-	/****       D E C O D E  T H E  R E S P O N S E         *****/
-
-	private String decodeResponse(DIResponse response, boolean showTrace, JsonObject jsonInput) {
+	/****       D E C O D E  T H E  R E S P O N S E         
+	 * @param messagesToDisplay *****/
+	private String decodeResponse(int count, DIResponse response, boolean showTrace, JsonObject jsonInput, String messagesToDisplay) {
 		JsonObject decodedResponse;
 		if (response.status == DIResponse.SUCCESS) {
 			JsonReader jsonReader = Json.createReader(new StringReader(response.payload));
@@ -250,13 +268,13 @@ public class Validate extends HttpServlet {
 			JsonObject output = jsonResponse.getJsonObject("output");
 			JsonObject approval = output.getJsonObject("approval");
 			String trace = "";
-			String message = buildSummaryMessage(jsonInput, output);
 			if (showTrace)
-				trace = buildTraceResponse(message, jsonInput, jsonResponse);
+				trace = buildTraceResponse(messagesToDisplay, jsonInput, jsonResponse);
 			decodedResponse = Json.createObjectBuilder()
 					.add("success", true)
 					.add("approved",approval.getBoolean("approved"))
-					.add("message",message)
+					.add("header", buildHeader())
+					.add("message",messagesToDisplay)
 					.add("showTrace",showTrace)
 					.add("jsonOutputContent", jsonResponse)
 					.add("trace", trace)
@@ -289,6 +307,29 @@ public class Validate extends HttpServlet {
 		return decodedResponse.toString();
 	}
 
+
+
+	private String buildHeader() {
+		if (countApproved ==1 && countRejected ==0) return "Approved loan request";
+		if (countApproved ==0 && countRejected ==1) return "Rejected loan request";
+		return countApproved + " Approved loan request(s) and " + countRejected + " Rejected loan request(s)";
+	}
+
+	private String getSummaryMessage(DIResponse response, JsonObject jsonInput, InputData data) {
+		if (response.status == DIResponse.SUCCESS) {
+			JsonReader jsonReader = Json.createReader(new StringReader(response.payload));
+			JsonObject jsonResponse = jsonReader.readObject();
+			JsonObject output = jsonResponse.getJsonObject("output");
+			JsonObject approval = output.getJsonObject("approval");
+			if (approval.getBoolean("approved")) 
+				countApproved++;
+			else 
+				countRejected++;
+			return buildSummaryMessage(jsonInput, data, output);
+		}
+		return "";
+	}
+
 	private String buildIncidentResponse(JsonObject jsonResponse) {
 		JsonObject incident = jsonResponse.getJsonObject("incident");
 		return incident.getString("incidentCategory") + " " + incident.getString("stackTrace");
@@ -297,7 +338,7 @@ public class Validate extends HttpServlet {
 	private String buildTraceResponse(String message, JsonObject jsonInput, JsonObject jsonResponse) {
 		JsonObject rootProperties = jsonResponse.getJsonObject("executionTrace").getJsonObject("rootRecord").getJsonObject("properties");
 		JsonArray nestedRecords = rootProperties.getJsonArray("nestedRecords");
-		String result =  "<b>Inputs:</b>   Loan, Borrower and Current time.<br><b>Fired rules:</b><ul>";
+		String result =  "<b>Latest execution fired rules:</b><ul>";
 		Iterator<JsonValue> iterator = nestedRecords.iterator();
 		while (iterator.hasNext()) {
 			JsonObject record = (JsonObject)iterator.next();
@@ -308,7 +349,7 @@ public class Validate extends HttpServlet {
 				}
 			}
 		}
-		return result + "</ul>" + "<b>Decision:</b> " + message;
+		return result + "</ul>" + "<b>Decision(s):</b> " + message;
 	}
 
 	private boolean hasFiredRules(JsonObject object) {
@@ -337,10 +378,14 @@ public class Validate extends HttpServlet {
 		return result;
 	}
 
-	private String buildSummaryMessage(JsonObject jsonInput, JsonObject output) {
-				String reason = output.getJsonObject("approval").getString("message");
-		String message = jsonInput.getString("firstName") + " " + jsonInput.getString("lastName") + "'s loan request of $"
-				+ jsonInput.getInt("amount") + " on " + jsonInput.getInt("duration") + " months is ";
+	private String buildSummaryMessage(JsonObject jsonInput, InputData data, JsonObject output) {
+		String reason = output.getJsonObject("approval").getString("message");
+		String message = jsonInput.getString("firstName") + " " + jsonInput.getString("lastName") 
+		        + " with $" + data.getYearlyIncome() + " yearly income and $"+ data.getCreditScore()
+		        + " credit score loan request of $"
+				+ data.getAmount()+ " on " + data.getDuration() + " months is ";
+											System.out.println("**Message " + message);
+
 		if (!output.getJsonObject("approval").getBoolean("approved")) return message + "rejected: " + reason +".";
 		String insurance = " No insurance is required.";
 		JsonObject insuranceObject = output.getJsonObject("insurance");

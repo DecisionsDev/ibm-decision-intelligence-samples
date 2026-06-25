@@ -74,6 +74,7 @@ $(document).ready(
                     'amount': parseInt($('input[name=amount]').val()),
                     'duration': parseInt($('input[name=duration]').val()),
                     'yearly-interest-rate': parseFloat($('input[name=yearly-interest-rate]').val()),
+                    'executionCount': parseInt($('input[name=executionCount]').val()),
                     'showTrace': showTrace
                 };
                 // process the form
@@ -111,20 +112,20 @@ $(document).ready(
                     } else if (data.success == true) {
                         if (data.approved == true) {
                             $('#info-header').attr('class', 'card-header bg-success');
-                            $('#info-header').text('Approved loan request')
+                            $('#info-header').text(data.header)
                             $('#info-json-header').attr('class', 'card-header bg-success');
-                            $('#info-json-header').text('Approved loan request')
+                            $('#info-json-header').text(data.header)
                         } else {
                             $('#info-header').attr('class', 'card-header bg-warning');
-                            $('#info-header').text('Rejected loan request')
+                            $('#info-header').text(data.header)
                             $('#info-json-header').attr('class', 'card-header bg-warning');
-                            $('#info-json-header').text('Rejected loan request')
+                            $('#info-json-header').text(data.header)
                         }
                         $('#info-json-text').html(format_json(data.jsonOutputContent))
                         if (data.showTrace)
 								$('#info-text').html(data.trace)
 						else
-                                $('#info-text').text(data.message)
+                                $('#info-text').html(data.message)
                     }
                 });
 

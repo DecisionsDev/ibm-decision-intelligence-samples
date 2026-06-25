@@ -1,0 +1,689 @@
+{
+  "id" : "qEKXsJ0BqDkvdXmNMQdW",
+  "name" : "Demo LoanApproval",
+  "description" : "",
+  "owner" : "643005GPK4",
+  "type" : "ONLY_ME",
+  "visualizations" : [ {
+    "id" : "6869827e-43fd-4ae1-ae07-0d0e92004bac",
+    "name" : "Approved loan count",
+    "description" : "",
+    "config" : {
+      "type" : "MetricConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "filters" : [ {
+        "field" : "data.out.approval.approved.boolean",
+        "op" : "IsTrue",
+        "values" : [ ]
+      } ],
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "",
+          "kind" : "Count"
+        } ],
+        "groups" : [ ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsTextDto",
+        "displayTitle" : true,
+        "unit" : "",
+        "useCustomPalette" : false,
+        "_version" : 1
+      },
+      "_version" : 1
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 10.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 0.0,
+      "y" : 0.0,
+      "w" : 1.0,
+      "h" : 1.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "42fdf1a4-55e0-4c99-89d4-ea6db78b02ed",
+    "name" : "Sum refused loan amount",
+    "description" : "",
+    "config" : {
+      "type" : "MetricConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "data.in.loan.amount.long",
+          "kind" : "Sum"
+        } ],
+        "groups" : [ ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsTextDto",
+        "displayTitle" : true,
+        "unit" : "",
+        "useCustomPalette" : false,
+        "_version" : 1
+      },
+      "_version" : 1
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 6.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 1.0,
+      "y" : 0.0,
+      "w" : 1.0,
+      "h" : 1.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "b2198f2c-6c7c-4424-b2e0-aeadf780ca7d",
+    "name" : "Average approved loan amount",
+    "description" : "",
+    "config" : {
+      "type" : "MetricConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "filters" : [ {
+        "field" : "data.out.approval.approved.boolean",
+        "op" : "IsTrue",
+        "values" : [ ]
+      } ],
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "data.in.loan.amount.long",
+          "kind" : "Average"
+        } ],
+        "groups" : [ ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsTextDto",
+        "displayTitle" : true,
+        "unit" : "",
+        "useCustomPalette" : false,
+        "_version" : 1
+      },
+      "_version" : 1
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 4.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 2.0,
+      "y" : 0.0,
+      "w" : 2.0,
+      "h" : 1.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "cb7a56ea-42f5-4e13-8bbf-d6711c833579",
+    "name" : "Zip code versus credit score",
+    "description" : "",
+    "config" : {
+      "type" : "KpiConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "data.in.borrower.creditScore.long",
+          "kind" : "Average"
+        } ],
+        "groups" : [ {
+          "field" : "data.in.borrower.zipCode.string.keyword"
+        } ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsBarDto",
+        "displayTitle" : true,
+        "unit" : "Borrower zip code ",
+        "legend" : {
+          "displayLegend" : true,
+          "displayTitle" : true,
+          "title" : ""
+        },
+        "useCustomPalette" : false,
+        "labelYAxis" : "Average credit score",
+        "verticalDirection" : true,
+        "stacked" : true,
+        "chartValueLabel" : {
+          "displayed" : false,
+          "format" : "Value",
+          "location" : "center"
+        },
+        "_version" : 1
+      }
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 12.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 0.0,
+      "y" : 3.0,
+      "w" : 2.0,
+      "h" : 2.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "e0f55d87-bac1-468c-984b-af67fa473c3f",
+    "name" : "Approval versus Yearly income and amount",
+    "description" : "",
+    "config" : {
+      "type" : "MetricConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "data.in.borrower.yearlyIncome.long",
+          "kind" : "Average"
+        }, {
+          "field" : "data.in.loan.amount.long",
+          "kind" : "Average"
+        } ],
+        "groups" : [ {
+          "field" : "data.out.approval.approved.boolean"
+        } ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsTableDto",
+        "displayTitle" : true,
+        "unit" : "",
+        "formatters" : [ ],
+        "useCustomPalette" : false,
+        "_version" : 1
+      },
+      "_version" : 1
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 14.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 4.0,
+      "y" : 0.0,
+      "w" : 2.0,
+      "h" : 2.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "4b1bed4c-c8d2-47d7-b6a5-8646dc1d969a",
+    "name" : "Approval versus yearly income",
+    "description" : "",
+    "config" : {
+      "type" : "KpiConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "data.in.borrower.yearlyIncome.long",
+          "kind" : "Average"
+        } ],
+        "groups" : [ {
+          "field" : "data.out.approval.approved.boolean"
+        }, {
+          "field" : "data.out.approval.message.string.keyword"
+        } ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsBarDto",
+        "displayTitle" : true,
+        "unit" : "Loan approved",
+        "formatters" : [ ],
+        "legend" : {
+          "displayLegend" : true,
+          "displayTitle" : true,
+          "title" : "Explanations",
+          "position" : "bottom",
+          "iconShape" : "square"
+        },
+        "useCustomPalette" : true,
+        "customPalette" : [ "#6929c4", "#a56eff", "#1192e8", "#009d9a", "#002d9c", "#005d5d" ],
+        "labelYAxis" : "Average Yearly Income",
+        "verticalDirection" : true,
+        "stacked" : true,
+        "chartValueLabel" : {
+          "displayed" : false,
+          "format" : "Value",
+          "location" : "center"
+        },
+        "_version" : 1
+      }
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 8.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 0.0,
+      "y" : 1.0,
+      "w" : 2.0,
+      "h" : 2.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "927bcaaa-4791-4419-99a5-049d211415d6",
+    "name" : "Insurance",
+    "description" : "",
+    "config" : {
+      "type" : "MetricConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "filters" : [ {
+        "field" : "data.out.approval.approved.boolean",
+        "op" : "IsTrue",
+        "values" : [ ]
+      } ],
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "data.out.insurance.rate.double",
+          "kind" : "StdDev"
+        } ],
+        "groups" : [ {
+          "field" : "data.out.insurance.required.boolean"
+        } ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsTableDto",
+        "displayTitle" : true,
+        "unit" : "",
+        "useCustomPalette" : false,
+        "_version" : 1
+      },
+      "_version" : 1
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 16.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 4.0,
+      "y" : 2.0,
+      "w" : 2.0,
+      "h" : 1.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "7cec8f4b-a669-4e83-aa69-7cbf67c3e917",
+    "name" : "Reasons to reject loans",
+    "description" : "",
+    "config" : {
+      "type" : "MetricConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "filters" : [ {
+        "field" : "data.out.approval.approved.boolean",
+        "op" : "IsFalse",
+        "values" : [ ]
+      } ],
+      "fieldAggregation" : {
+        "aggregations" : [ {
+          "field" : "",
+          "kind" : "Count"
+        } ],
+        "groups" : [ {
+          "field" : "data.out.approval.message.string.keyword"
+        } ],
+        "drill" : false,
+        "_version" : 2
+      },
+      "settings" : {
+        "type" : "SingleSettingsPieDto",
+        "displayTitle" : true,
+        "unit" : "",
+        "legend" : {
+          "displayLegend" : true,
+          "displayTitle" : true,
+          "title" : "Reason to refuse loan"
+        },
+        "useCustomPalette" : false,
+        "pieChartLabelDisplayed" : true,
+        "pieChartLabelFormat" : "Percentage",
+        "_version" : 1
+      },
+      "_version" : 1
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 0.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 2.0,
+      "y" : 1.0,
+      "w" : 2.0,
+      "h" : 2.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "488063d5-b9f6-4bb5-9f9e-1183ce5984a5",
+    "name" : "Rejected loans details",
+    "description" : "",
+    "config" : {
+      "type" : "TableConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "filters" : [ {
+        "field" : "data.out.approval.approved.boolean",
+        "op" : "IsFalse",
+        "values" : [ ]
+      } ],
+      "columns" : [ {
+        "field" : "data.in.loan.amount.long",
+        "label" : "Amount"
+      }, {
+        "field" : "data.in.borrower.yearlyIncome.long",
+        "label" : "Yearly Income"
+      }, {
+        "field" : "data.in.borrower.creditScore.long",
+        "label" : "Credit score"
+      }, {
+        "field" : "data.in.loan.numberOfMonthlyPayments.long",
+        "label" : "Duration (monthes)"
+      }, {
+        "field" : "data.out.approval.message.string.keyword",
+        "label" : "Reason"
+      } ]
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 2.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 4.0,
+      "y" : 3.0,
+      "w" : 2.0,
+      "h" : 2.0
+    } ],
+    "showAsTable" : false
+  }, {
+    "id" : "1605005e-b623-43ba-a9c6-9270dd731950",
+    "name" : "Approval per zip code",
+    "description" : "",
+    "config" : {
+      "type" : "DrillDownConfigDto",
+      "domain" : {
+        "kind" : "Decisions",
+        "monitoringSourceName" : "Decisions",
+        "id" : "iEKWsJ0BqDkvdXmNsAc8",
+        "name" : "My Loan approval",
+        "fields" : [ "decision.serviceId" ],
+        "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+        "timestampField" : "timestamp",
+        "hasSuggestions" : false,
+        "parentId" : "643005GPK4/MFTest21/Loan Approval"
+      },
+      "drillDownLayers" : [ {
+        "id" : "4e48ffc2-ec99-43a8-bdaf-0e5cd0949424",
+        "name" : "Approval",
+        "description" : "",
+        "config" : {
+          "type" : "MetricConfigDto",
+          "domain" : {
+            "kind" : "Decisions",
+            "monitoringSourceName" : "Decisions",
+            "id" : "iEKWsJ0BqDkvdXmNsAc8",
+            "name" : "My Loan approval",
+            "fields" : [ "decision.serviceId" ],
+            "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+            "timestampField" : "timestamp",
+            "hasSuggestions" : false,
+            "parentId" : "643005GPK4/MFTest21/Loan Approval"
+          },
+          "fieldAggregation" : {
+            "aggregations" : [ {
+              "field" : "",
+              "kind" : "Count"
+            } ],
+            "groups" : [ {
+              "field" : "data.out.approval.approved.boolean"
+            } ],
+            "drill" : false,
+            "_version" : 2
+          },
+          "settings" : {
+            "type" : "SingleSettingsPieDto",
+            "displayTitle" : true,
+            "unit" : "",
+            "legend" : {
+              "displayLegend" : true,
+              "displayTitle" : true,
+              "title" : ""
+            },
+            "useCustomPalette" : false,
+            "pieChartLabelDisplayed" : true,
+            "pieChartLabelFormat" : "Percentage",
+            "_version" : 1
+          },
+          "_version" : 1
+        },
+        "layouts" : [ ],
+        "showAsTable" : false
+      }, {
+        "id" : "671c269a-108b-4182-beeb-ed2cdcb75fc6",
+        "name" : "Zip code",
+        "description" : "",
+        "config" : {
+          "type" : "MetricConfigDto",
+          "domain" : {
+            "kind" : "Decisions",
+            "monitoringSourceName" : "Decisions",
+            "id" : "iEKWsJ0BqDkvdXmNsAc8",
+            "name" : "My Loan approval",
+            "fields" : [ "decision.serviceId" ],
+            "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+            "timestampField" : "timestamp",
+            "hasSuggestions" : false,
+            "parentId" : "643005GPK4/MFTest21/Loan Approval"
+          },
+          "fieldAggregation" : {
+            "aggregations" : [ {
+              "field" : "",
+              "kind" : "Count"
+            } ],
+            "groups" : [ {
+              "field" : "data.in.borrower.zipCode.string.keyword"
+            } ],
+            "drill" : false,
+            "_version" : 2
+          },
+          "settings" : {
+            "type" : "SingleSettingsPieDto",
+            "displayTitle" : true,
+            "unit" : "",
+            "legend" : {
+              "displayLegend" : true,
+              "displayTitle" : true,
+              "title" : ""
+            },
+            "useCustomPalette" : false,
+            "pieChartLabelDisplayed" : true,
+            "pieChartLabelFormat" : "Percentage",
+            "_version" : 1
+          },
+          "_version" : 1
+        },
+        "layouts" : [ ],
+        "showAsTable" : false
+      }, {
+        "id" : "b69d2b81-8cbb-4692-a9fa-636b0677b8f2",
+        "name" : "Details",
+        "description" : "",
+        "config" : {
+          "type" : "TableConfigDto",
+          "domain" : {
+            "kind" : "Decisions",
+            "monitoringSourceName" : "Decisions",
+            "id" : "iEKWsJ0BqDkvdXmNsAc8",
+            "name" : "My Loan approval",
+            "fields" : [ "decision.serviceId" ],
+            "fieldValues" : [ "643005GPK4/MFTest21/Loan Approval" ],
+            "timestampField" : "timestamp",
+            "hasSuggestions" : false,
+            "parentId" : "643005GPK4/MFTest21/Loan Approval"
+          },
+          "columns" : [ {
+            "field" : "data.in.loan.amount.long",
+            "label" : "Amount"
+          }, {
+            "field" : "data.in.borrower.yearlyIncome.long",
+            "label" : "Yearly income"
+          }, {
+            "field" : "data.in.borrower.creditScore.long",
+            "label" : "Credit score"
+          }, {
+            "field" : "data.in.loan.numberOfMonthlyPayments.long",
+            "label" : "Duration (monthes)"
+          } ]
+        },
+        "layouts" : [ ],
+        "showAsTable" : false
+      } ]
+    },
+    "layouts" : [ {
+      "kind" : "SM",
+      "x" : 0.0,
+      "y" : 18.0,
+      "w" : 1.0,
+      "h" : 2.0
+    }, {
+      "kind" : "LG",
+      "x" : 2.0,
+      "y" : 3.0,
+      "w" : 2.0,
+      "h" : 2.0
+    } ],
+    "showAsTable" : false
+  } ],
+  "timeWindow" : {
+    "type" : "NoTimeWindowDto"
+  },
+  "creation" : "2026-04-21T15:09:59.028Z",
+  "lastUpdate" : "2026-04-28T15:35:17.130790110Z",
+  "goalsLayout" : [ ],
+  "_dashboardVersion" : 5
+}
